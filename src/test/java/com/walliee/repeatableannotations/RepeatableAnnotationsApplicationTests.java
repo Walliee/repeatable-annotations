@@ -1,6 +1,7 @@
 package com.walliee.repeatableannotations;
 
 import java.lang.reflect.Method;
+import java.util.Set;
 
 import org.junit.Test;
 
@@ -26,6 +27,34 @@ public class RepeatableAnnotationsApplicationTests {
 		Role role_b = AnnotationUtils.synthesizeAnnotation(singletonMap("value", "role_b"), Role.class, null);
 		Role[] roles = {role_a, role_b};
 		assertArrayEquals(roles, annotation.value());
+	}
+
+	@Test
+	public void getRepeatedAnnotations() throws NoSuchMethodException {
+		Method method = MyObject.class.getMethod("someMethod");
+		Method mostSpecificMethod = ClassUtils.getMostSpecificMethod(method, MyObject.class);
+		Set<Role> annotations = AnnotationUtils.getRepeatableAnnotations(mostSpecificMethod, Role.class);
+
+		assertNotNull(annotations);
+		assertEquals(2, annotations.size());
+		Role role_a = AnnotationUtils.synthesizeAnnotation(singletonMap("value", "role_a"), Role.class, null);
+		Role role_b = AnnotationUtils.synthesizeAnnotation(singletonMap("value", "role_b"), Role.class, null);
+		Role[] roles = {role_a, role_b};
+		assertArrayEquals(roles, annotations.toArray(new Role[annotations.size()]));
+	}
+
+	@Test
+	public void getRepeatedAnnotationsContainer() throws NoSuchMethodException {
+		Method method = MyObject.class.getMethod("someMethod");
+		Method mostSpecificMethod = ClassUtils.getMostSpecificMethod(method, MyObject.class);
+		Set<Role> annotations = AnnotationUtils.getRepeatableAnnotations(mostSpecificMethod, Role.class, Roles.class);
+
+		assertNotNull(annotations);
+		assertEquals(2, annotations.size());
+		Role role_a = AnnotationUtils.synthesizeAnnotation(singletonMap("value", "role_a"), Role.class, null);
+		Role role_b = AnnotationUtils.synthesizeAnnotation(singletonMap("value", "role_b"), Role.class, null);
+		Role[] roles = {role_a, role_b};
+		assertArrayEquals(roles, annotations.toArray(new Role[annotations.size()]));
 	}
 
 
